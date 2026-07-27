@@ -7,6 +7,7 @@
     <!-- Icon HTML Tab -->
     <link rel="icon" type="image/x-icon" href="IC1.png">
     <!-- Tailwind CSS CDN -->
+    <!-- Catatan: Peringatan CSP 'eval' di console berasal dari script CDN ini. Ini adalah perilaku normal untuk Tailwind CDN. -->
     <script src="https://cdn.tailwindcss.com"></script>
 	<script src="https://www.google.com/recaptcha/enterprise.js?render=6LfXSmctAAAAAEYhovzed1bxIWssHlj26DyVhSzZ"></script>
     <script>
@@ -919,13 +920,13 @@
         </div>
     </footer>
 
-    <!-- AI Assistant Floating Button -->
-    <button id="chat-toggle-btn" class="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-sm flex items-center justify-center text-ocean-900 text-2xl shadow-[0_0_20px_rgba(0,240,255,0.5)] hover:scale-110 transition-transform z-50 border border-cyan-300">
+    <!-- AI Assistant Floating Button (Dipindah ke Kiri agar tidak menutupi reCAPTCHA) -->
+    <button id="chat-toggle-btn" class="fixed bottom-6 left-6 sm:bottom-10 sm:left-10 w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-sm flex items-center justify-center text-ocean-900 text-2xl shadow-[0_0_20px_rgba(0,240,255,0.5)] hover:scale-110 transition-transform z-50 border border-cyan-300">
         <i class="ph-fill ph-terminal-window animate-pulse"></i>
     </button>
 
-    <!-- AI Chat Window -->
-    <div id="chat-window" class="fixed bottom-24 right-4 sm:right-10 w-[calc(100vw-2rem)] sm:w-[400px] h-[500px] max-h-[75vh] glass-card flex-col hidden z-50 overflow-hidden shadow-[0_0_30px_rgba(0,240,255,0.2)] border-cyan-400/50 font-mono rounded-sm">
+    <!-- AI Chat Window (Dipindah ke Kiri) -->
+    <div id="chat-window" class="fixed bottom-24 left-4 sm:left-10 w-[calc(100vw-2rem)] sm:w-[400px] h-[500px] max-h-[75vh] glass-card flex-col hidden z-50 overflow-hidden shadow-[0_0_30px_rgba(0,240,255,0.2)] border-cyan-400/50 font-mono rounded-sm">
         <!-- Header -->
         <div class="p-4 border-b border-cyan-400/30 bg-ocean-900/90 flex justify-between items-center relative overflow-hidden">
             <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-50"></div>
@@ -1061,6 +1062,7 @@
             };
 
             const callGeminiAPI = async (payload, retries = 3, delay = 1000) => {
+                // Biarkan API key kosong, platform ini akan menyediakannya saat runtime
                 const apiKey = ""; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
