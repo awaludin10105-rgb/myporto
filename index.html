@@ -816,26 +816,99 @@
                 </div>
 				<!-- Form Submission -->
 				<form id="contactForm" action="https://formcarry.com/s/IRcAn4PNhAg" method="POST" class="space-y-6">
-					<div class="grid sm:grid-cols-2 gap-6">
-						<div>
-						<input type="text" name="user_name" placeholder="Your Name" required class="w-full px-5 py-4 rounded-xl bg-ocean-900 border border-ocean-600 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all">
-						</div>
-						<div>
-						<input type="email" name="user_email" placeholder="Email Address" required class="w-full px-5 py-4 rounded-xl bg-ocean-900 border border-ocean-600 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all">
-						</div>
-					</div>
-            		<div>
-					<textarea name="message" rows="4" placeholder="How Can I Help You?" required class="w-full px-5 py-4 rounded-xl bg-ocean-900 border border-ocean-600 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all resize-none"></textarea>
-					</div>
-					<button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-ocean-900 font-bold text-lg hover:from-gold-400 hover:to-gold-500 transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)]">
-					Send Message
-					</button>
-					<script>
-						function onSubmit(token) {
-							document.getElementById("contactForm").submit();
-						} // Use `requestSubmit()` for extra features like browser input validation.
-					</script>
-				</form>
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div>
+                            <input type="text" name="user_name" placeholder="Your Name" required class="w-full px-5 py-4 rounded-xl bg-ocean-900/50 border border-ocean-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all">
+                        </div>
+                        <div>
+                            <input type="email" name="user_email" placeholder="Email Address" required class="w-full px-5 py-4 rounded-xl bg-ocean-900/50 border border-ocean-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <textarea name="message" rows="4" placeholder="How Can I Help You?" required class="w-full px-5 py-4 rounded-xl bg-ocean-900/50 border border-ocean-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all resize-none"></textarea>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 text-ocean-900 font-bold text-lg hover:from-gold-400 hover:to-gold-500 transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                        Send Message
+                    </button>
+                </form>
+
+                <script>
+                    const form = document.getElementById('contactForm');
+                    const submitBtn = document.getElementById('submitBtn');
+
+                    form.addEventListener('submit', async function(e) {
+                        // 1. Mencegah form redirect/pindah halaman bawaan browser
+                        e.preventDefault();
+
+                        // 2. Ubah teks tombol menjadi loading state
+                        const originalText = submitBtn.innerText;
+                        submitBtn.innerText = "Verifying & Sending...";
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+                        try {
+                            // 3. Eksekusi reCAPTCHA v3 Enterprise untuk mendapatkan token
+                            await grecaptcha.enterprise.ready();
+                            const token = await grecaptcha.enterprise.execute('6LfXSmctAAAAAEYhovzed1bxIWssHlj26DyVhSzZ', {action: 'SUBMIT'});
+                            
+                            // 4. Siapkan data form beserta token reCAPTCHA untuk dikirim
+                            const formData = new FormData(form);
+                            formData.append('g-recaptcha-response', token);
+
+                            // 5. Kirim data menggunakan AJAX (Fetch API) agar halaman tidak refresh
+                            const response = await fetch(form.action, {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json' // Meminta respons JSON dari Formcarry
+                                },
+                                body: formData
+                            });
+
+                            if (response.ok) {
+                                // 6. JIKA SUKSES: Reset form (kosongkan semua input teks)
+                                form.reset();
+                                
+                                // Ubah gaya tombol menjadi indikator sukses (warna hijau)
+                                submitBtn.innerText = "Message Sent Successfully!";
+                                submitBtn.classList.replace('text-ocean-900', 'text-green-900');
+                                submitBtn.classList.replace('from-gold-500', 'from-green-400');
+                                submitBtn.classList.replace('to-gold-600', 'to-green-500');
+                                submitBtn.classList.replace('hover:from-gold-400', 'hover:from-green-500');
+                                submitBtn.classList.replace('hover:to-gold-500', 'hover:to-green-600');
+                                
+                                // Kembalikan tombol ke keadaan semula setelah 3 detik
+                                setTimeout(() => {
+                                    submitBtn.innerText = originalText;
+                                    submitBtn.disabled = false;
+                                    submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                                    
+                                    // Kembalikan warna awal (gold)
+                                    submitBtn.classList.replace('text-green-900', 'text-ocean-900');
+                                    submitBtn.classList.replace('from-green-400', 'from-gold-500');
+                                    submitBtn.classList.replace('to-green-500', 'to-gold-600');
+                                    submitBtn.classList.replace('hover:from-green-500', 'hover:from-gold-400');
+                                    submitBtn.classList.replace('hover:to-green-600', 'hover:to-gold-500');
+                                }, 3000);
+                            } else {
+                                throw new Error("Gagal mengirim pesan ke server.");
+                            }
+
+                        } catch (error) {
+                            console.error("Submission Error:", error);
+                            
+                            // Tampilkan pesan error di tombol jika gagal
+                            submitBtn.innerText = "Failed to Send. Try Again.";
+                            
+                            // Kembalikan tombol ke keadaan semula setelah 3 detik
+                            setTimeout(() => {
+                                submitBtn.innerText = originalText;
+                                submitBtn.disabled = false;
+                                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                            }, 3000);
+                        }
+                    });
+                </script>
 			</div>
         </div>
     </section>
