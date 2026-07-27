@@ -833,21 +833,25 @@
 					Send Message
 					</button>
 				</form>
-
 				<script>
-					const form = document.getElementById('contactForm');
-            
-					form.addEventListener('submit', function(event) {
-					// Jeda singkat agar data terkirim sebelum form di-reset
-					setTimeout(() => {
-						form.reset();
-						// Pastikan captcha juga di-reset
-						if(typeof grecaptcha !== 'undefined') {
-							grecaptcha.reset();
-						}
-						console.log("Message Sent and Form Reset!");
-						}, 500);
-					});
+        			const form = document.getElementById('contactForm');
+        			const recaptchaError = document.getElementById('recaptchaError');
+						form.addEventListener('submit', function(event) {
+           				const recaptchaResponse = grecaptcha.getResponse();
+                     		if (recaptchaResponse.length === 0) {
+								event.preventDefault();
+								recaptchaError.classList.remove('hidden');
+								return;
+							}
+							recaptchaError.classList.add('hidden');
+							setTimeout(() => {
+								form.reset();
+								if(typeof grecaptcha !== 'undefined') {
+									grecaptcha.reset();
+								}
+								console.log("Message Sent and Form Reset!");
+							}, 500);
+						});
 				</script>
 			 </div>
         </div>
