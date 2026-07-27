@@ -850,7 +850,8 @@
 
                         try {
                             // 3. Eksekusi reCAPTCHA v3 Enterprise untuk mendapatkan token
-                            await grecaptcha.enterprise.ready();
+                            // FIX: Menggunakan Promise untuk membungkus callback ready()
+                            await new Promise(resolve => grecaptcha.enterprise.ready(resolve));
                             const token = await grecaptcha.enterprise.execute('6LfXSmctAAAAAEYhovzed1bxIWssHlj26DyVhSzZ', {action: 'SUBMIT'});
                             
                             // 4. Siapkan data form beserta token reCAPTCHA untuk dikirim
