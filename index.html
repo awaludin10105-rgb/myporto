@@ -3,7 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Portfolio</title>
+    <title style >Web Portfolio</title>
+	<script>
+        // Teks yang ingin dijalankan
+        let teks = "Web Portofolio";
+        
+        function gerakTitle() {
+            // Geser karakter pertama ke bagian belakang string
+            teks = teks.substring(1) + teks.substring(0, 1);
+            document.title = teks;
+            // Kecepatan gerak dalam milidetik (200ms)
+            setTimeout(gerakTitle, 200);
+        }
+        
+        // Jalankan fungsi saat halaman dimuat
+        window.onload = gerakTitle;
+    </script>
     <!-- Icon HTML Tab -->
     <link rel="icon" type="image/x-icon" href="IC1.png">
     <!-- Tailwind CSS CDN -->
@@ -366,7 +381,7 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12 text-center md:text-left">
                 <h2 class="text-2xl font-bold text-slate-100 flex items-center justify-center md:justify-start gap-3 uppercase tracking-wider">
-                    <i class="ph-fill ph-cpu text-cyan-400 animate-pulse"></i> Professional Experience
+                    <i class="ph-fill ph-network text-cyan-400 animate-pulse"></i> Professional Experience
                 </h2>
             </div>
 
